@@ -1,21 +1,24 @@
 const express = require('express');
+const router = express.Router();
 const {
   getTips,
   getDailyTip,
   getTip,
   createTip,
-  likeTip
+  updateTip,
+  deleteTip
 } = require('../controllers/tipController');
 
-const router = express.Router();
 const { protect, authorize } = require('../middleware/authMiddleware');
 
+// Public routes
 router.get('/', getTips);
 router.get('/daily', getDailyTip);
 router.get('/:id', getTip);
 
-// Protected routes
+// Protected/Admin routes
 router.post('/', protect, authorize('admin'), createTip);
-router.post('/:id/like', protect, likeTip);
+router.put('/:id', protect, authorize('admin'), updateTip);
+router.delete('/:id', protect, authorize('admin'), deleteTip);
 
 module.exports = router;

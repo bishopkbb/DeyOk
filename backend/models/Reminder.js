@@ -2,75 +2,72 @@ const mongoose = require('mongoose');
 
 const ReminderSchema = new mongoose.Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
   },
   activity: {
     type: String,
-    required: [true, 'Please specify the activity'],
+    required: [true, 'Please add an activity'],
     enum: [
-      'drink_water',
-      'take_medication',
-      'exercise',
-      'blood_pressure_check',
-      'blood_sugar_check',
-      'doctor_appointment',
-      'custom'
+      'Drink Water',
+      'Take Medication',
+      'Exercise',
+      'Check Blood Pressure',
+      'Take Vitamins',
+      'Walk',
+      'Eat Meal',
+      'Sleep',
+      'Check Blood Sugar',
+      'Eye Drops'
     ]
-  },
-  customActivity: {
-    type: String,
-    maxlength: [100, 'Custom activity cannot be more than 100 characters']
   },
   frequency: {
     type: String,
-    required: true,
-    enum: ['once', 'daily', 'weekly', 'custom']
-  },
-  customFrequency: {
-    interval: Number, // e.g., 3 (for every 3 hours)
-    unit: {
-      type: String,
-      enum: ['minutes', 'hours', 'days', 'weeks']
-    }
+    required: [true, 'Please add frequency'],
+    enum: [
+      'Every hour',
+      'Every 2 hours',
+      'Every 3 hours',
+      'Every 4 hours',
+      'Every 6 hours',
+      'Every 8 hours',
+      'Every 12 hours',
+      'Daily',
+      'Twice daily',
+      'Three times daily',
+      'Weekly',
+      'Custom'
+    ]
   },
   time: {
     type: String,
-    required: [true, 'Please specify the time'],
-    match: [/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Please provide valid time (HH:MM)']
+    required: [true, 'Please add time']
   },
-  daysOfWeek: [{
-    type: String,
-    enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-  }],
   notes: {
     type: String,
     maxlength: [500, 'Notes cannot be more than 500 characters']
   },
-  isActive: {
+  active: {
     type: Boolean,
     default: true
   },
-  lastTriggered: Date,
-  nextTrigger: Date,
+  lastTriggered: {
+    type: Date
+  },
   completionHistory: [{
-    date: {
+    completedAt: {
       type: Date,
       default: Date.now
     },
     completed: {
       type: Boolean,
-      default: false
+      default: true
     },
     note: String
   }]
 }, {
   timestamps: true
 });
-
-// Index for efficient querying
-ReminderSchema.index({ user: 1, isActive: 1 });
-ReminderSchema.index({ nextTrigger: 1 });
 
 module.exports = mongoose.model('Reminder', ReminderSchema);

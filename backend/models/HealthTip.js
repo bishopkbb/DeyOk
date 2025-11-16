@@ -1,40 +1,25 @@
 const mongoose = require('mongoose');
 
 const HealthTipSchema = new mongoose.Schema({
-  title: {
-    english: { type: String, required: true },
-    pidgin: String,
-    yoruba: String,
-    igbo: String,
-    hausa: String
-  },
   content: {
-    english: { type: String, required: true },
-    pidgin: String,
-    yoruba: String,
-    igbo: String,
-    hausa: String
+    type: String,
+    required: [true, 'Please add tip content'],
+    trim: true,
+    maxlength: [500, 'Content cannot be more than 500 characters']
   },
   category: {
     type: String,
-    required: true,
-    enum: [
-      'nutrition',
-      'hygiene',
-      'prevention',
-      'mental_health',
-      'exercise',
-      'sleep',
-      'chronic_disease',
-      'maternal_health',
-      'child_health',
-      'general'
-    ]
+    required: [true, 'Please add a category'],
+    enum: ['Nutrition', 'Hygiene', 'Prevention', 'Mental Health', 'Exercise', 'General']
   },
-  tags: [String],
-  imageUrl: String,
-  source: String,
-  isActive: {
+  translations: {
+    english: String,
+    pidgin: String,
+    yoruba: String,
+    igbo: String,
+    hausa: String
+  },
+  active: {
     type: Boolean,
     default: true
   },
@@ -42,20 +27,18 @@ const HealthTipSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User'
   }
 }, {
   timestamps: true
 });
 
-// Index for efficient querying
-HealthTipSchema.index({ category: 1, isActive: 1 });
-HealthTipSchema.index({ tags: 1 });
+// Increment views when tip is accessed
+HealthTipSchema.methods.incrementViews = function() {
+  this.views += 1;
+  return this.save();
+};
 
 module.exports = mongoose.model('HealthTip', HealthTipSchema);

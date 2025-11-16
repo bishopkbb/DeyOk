@@ -1,12 +1,8 @@
 const User = require('../models/User');
 
-// @desc    Get all users (Admin only)
-// @route   GET /api/users
-// @access  Private/Admin
-exports.getUsers = async (req, res, next) => {
+exports.getUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
-
     res.status(200).json({
       success: true,
       count: users.length,
@@ -20,20 +16,15 @@ exports.getUsers = async (req, res, next) => {
   }
 };
 
-// @desc    Get single user
-// @route   GET /api/users/:id
-// @access  Private
-exports.getUser = async (req, res, next) => {
+exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-
     res.status(200).json({
       success: true,
       data: user
@@ -46,13 +37,9 @@ exports.getUser = async (req, res, next) => {
   }
 };
 
-// @desc    Delete user
-// @route   DELETE /api/users/:id
-// @access  Private
-exports.deleteUser = async (req, res, next) => {
+exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -60,16 +47,14 @@ exports.deleteUser = async (req, res, next) => {
       });
     }
 
-    // Make sure user can only delete their own account
     if (user._id.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(401).json({
         success: false,
-        message: 'Not authorized to delete this user'
+        message: 'Not authorized'
       });
     }
 
     await user.deleteOne();
-
     res.status(200).json({
       success: true,
       data: {}

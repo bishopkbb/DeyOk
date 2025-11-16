@@ -19,7 +19,7 @@ connectDB();
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true,
 }));
 app.use(morgan('dev')); // Logging

@@ -10,8 +10,6 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 
 router.get('/', getFirstAidTopics);
 router.get('/:type', getFirstAidByType);
-
-// Admin only
 router.post('/', protect, authorize('admin'), createFirstAidContent);
 
 module.exports = router;
